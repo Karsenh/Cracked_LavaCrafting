@@ -66,6 +66,7 @@ Numpad0::
     equipmentCoords.Push({ "conCapeX": X + 20, "conCapeY": Y + 35 })
 
     altarCoords.Push({ "fireAltarX": X - 296, "fireAltarY": Y - 35 })
+    altarCoords.Push({ "entranceX": X - 332, "entranceY": Y - 132 })
 
     spellCoords.Push({ "imbueX": X + 60, "imbueY": Y + 120 })
 
@@ -73,6 +74,7 @@ return
 
 ; BANK
 Numpad1::
+    Random, clickAltarDelay, 2000, 2100
     BlockInput, On
     global rodCharges
 
@@ -93,14 +95,18 @@ Numpad1::
     openBank()
     withdrawEssence()
     teleportTo("da")
+    customMouseMove(altarCoords[2]["entranceX"], altarCoords[2]["entranceY"])
+    Sleep, clickAltarDelay
+    MouseClick, Left
     BlockInput, Off
 return
 
 ; FIRE ALTAR
 Numpad2::
     Random, imbueDelay, 2050, 2175
+    Random, mouseSpeed, 2.1, 3.2
     BlockInput, On
-    MouseMove, 505, 350
+    MouseMove, 675, 142, mouseSpeed
     MouseClick, Left
     Sleep, imbueDelay
     castImbue()
@@ -112,7 +118,9 @@ return
 ; Individual testing
 Numpad3::
     ; testMouseMovements()
-    teleportTo("home")
+    global altarCoords
+
+    customMouseMove(altarCoords[2]["entranceX"], altarCoords[2]["entranceY"])
 return
 
 Numpad4::

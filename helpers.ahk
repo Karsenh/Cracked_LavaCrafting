@@ -3,9 +3,9 @@
 SetWorkingDir, %A_ScriptDir%
 
 randVariances() {
-    Random mouseMoveSpeedDev, 3.25, 4.2
+    Random mouseMoveSpeedDev, 3.25, 4.05
     Random pixelCoordDev, -3, 3
-    Random actionDelayDev, 550, 825
+    Random actionDelayDev, 425, 600
 
     variancesObject := Object("mouseSpeed", mouseMoveSpeedDev, "pixelDev", pixelCoordDev, "actionDelay", actionDelayDev)
 
