@@ -54,7 +54,7 @@ Numpad0::
     inventoryCoords.Push({ "slot4X": X, "slot4Y": Y + 99 }) ; Earth runes
     inventoryCoords.Push({ "equipItemX": X + 45, "equipItemY": Y })
 
-    bankCoords.Push({ "chestX": X - 313, "chestY": Y - 60 })
+    bankCoords.Push({ "chestX": X - 308, "chestY": Y - 60 })
     bankCoords.Push({ "essenceSlotX": X - 160, "essenceSlotY": Y - 90 })
     bankCoords.Push({ "essenceWithdrawX": X - 170, "essenceWithdrawY": Y + 10 })
     bankCoords.Push({ "rodX": X - 500, "rodY": Y + 25 })
@@ -63,15 +63,17 @@ Numpad0::
     equipmentCoords.Push({ "ringSlotX": X + 115, "ringSlotY": Y + 155 })
     equipmentCoords.Push({ "duelArenaX": X + 85, "duelArenaY": Y +195 })
     equipmentCoords.Push({ "castleWarsX": X + 83, "castleWarsY": Y + 210 })
+    equipmentCoords.Push({ "conCapeX": X + 20, "conCapeY": Y + 35 })
 
-    altarCoords.Push({ "fireAltarX": X - 296, "fireAltarY": Y - 51 })
+    altarCoords.Push({ "fireAltarX": X - 296, "fireAltarY": Y - 35 })
 
-    spellCoords.Push({ "imbueX": X + 50, "imbueY": Y + 110 })
+    spellCoords.Push({ "imbueX": X + 60, "imbueY": Y + 120 })
 
 return
 
 ; BANK
 Numpad1::
+    BlockInput, On
     global rodCharges
 
     if (rodCharges == 0) {
@@ -91,18 +93,26 @@ Numpad1::
     openBank()
     withdrawEssence()
     teleportTo("da")
+    BlockInput, Off
 return
 
 ; FIRE ALTAR
 Numpad2::
+    Random, imbueDelay, 2050, 2175
+    BlockInput, On
+    MouseMove, 505, 350
+    MouseClick, Left
+    Sleep, imbueDelay
     castImbue()
     craftLavaRunes()
     teleportTo("cw")
+    BlockInput, Off
 return
 
 ; Individual testing
 Numpad3::
-    testVariances()
+    ; testMouseMovements()
+    teleportTo("home")
 return
 
 Numpad4::

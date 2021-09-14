@@ -1,14 +1,30 @@
+#Include, ./debugging.ahk
 #SingleInstance, Force
 SetWorkingDir, %A_ScriptDir%
 
 randVariances() {
-    Random mouseMoveSpeedDev, 3.1, 4.1
-    Random pixelCoordDev, 5, 15
-    Random actionDelayDev, 550, 775
+    Random mouseMoveSpeedDev, 3.25, 4.2
+    Random pixelCoordDev, -3, 3
+    Random actionDelayDev, 550, 825
 
     variancesObject := Object("mouseSpeed", mouseMoveSpeedDev, "pixelDev", pixelCoordDev, "actionDelay", actionDelayDev)
 
     return variancesObject
+}
+
+customMouseMove(X, Y) {
+    variance := randVariances()
+    pixeldDev := variance["pixelDev"]
+    mouseSpeed := variance["mouseSpeed"]
+
+    MouseMove, X+pixeldDev, Y+pixeldDev, mouseSpeed
+
+    variance := randVariances()
+    pixeldDev := variance["pixelDev"]
+    mouseSpeed := variance["mouseSpeed"]
+
+    MouseMove, X+pixeldDev, Y+pixeldDev, mouseSpeed
+
 }
 
 clickAllPouches(isWithdraw) {
@@ -24,26 +40,26 @@ clickAllPouches(isWithdraw) {
 
     if (isWithdraw) {
         ; Shift + Left click 
-        MouseMove, inventoryCoords[1]["slot1X"] + pixelDev, inventoryCoords[1]["slot1Y"] + pixelDev, mouseSpeed
+        customMouseMove(inventoryCoords[1]["slot1X"], inventoryCoords[1]["slot1Y"])
         Send, {Shift Down}
         MouseClick, Left
-
-        MouseMove, inventoryCoords[2]["slot2X"] + pixelDev, inventoryCoords[2]["slot2Y"] + pixelDev, mouseSpeed
+        customMouseMove(inventoryCoords[2]["slot2X"], inventoryCoords[2]["slot2Y"])
         MouseClick, Left
-
-        MouseMove, inventoryCoords[3]["slot3X"] + pixelDev, inventoryCoords[3]["slot3Y"] + pixelDev, mouseSpeed
+        customMouseMove(inventoryCoords[3]["slot3X"], inventoryCoords[3]["slot3Y"])
         MouseClick, Left 
         Send, {Shift Up}
-        Sleep, delayDev + 150
     } else {
         ; Regular Left click
-        MouseMove, inventoryCoords[1]["slot1X"] + pixelDev, inventoryCoords[1]["slot1Y"] + pixelDev, mouseSpeed
+        customMouseMove(inventoryCoords[1]["slot1X"], inventoryCoords[1]["slot1Y"] )
         MouseClick, Left
-        MouseMove, inventoryCoords[2]["slot2X"] + pixelDev, inventoryCoords[2]["slot2Y"] + pixelDev, mouseSpeed
+        customMouseMove(inventoryCoords[2]["slot2X"],inventoryCoords[2]["slot2Y"])
         MouseClick, Left
-        MouseMove, inventoryCoords[3]["slot3X"] + pixelDev, inventoryCoords[3]["slot3Y"] + pixelDev, mouseSpeed
+        customMouseMove(inventoryCoords[3]["slot3X"], inventoryCoords[3]["slot3Y"])
         MouseClick, Left
     }
+
+    Random, adtlDelayVariance, 35, 65
+    Sleep, delayDev + adtlDelayVariance
 
 }
 
@@ -55,9 +71,11 @@ withdrawEssence() {
     pixelDev := variance["pixelDev"]
     delayDev := variance["actionDelay"]
 
-    MouseMove, bankCoords[2]["essenceSlotX"] + pixelDev, bankCoords[2]["essenceSlotY"] + pixelDev, mouseSpeed
+    customMouseMove(bankCoords[2]["essenceSlotX"], bankCoords[2]["essenceSlotY"])
+    ; MouseMove, bankCoords[2]["essenceSlotX"] + pixelDev, bankCoords[2]["essenceSlotY"] + pixelDev, mouseSpeed
     MouseClick, Right
-    MouseMove, bankCoords[3]["essenceWithdrawX"] + pixelDev, bankCoords[3]["essenceWithdrawY"] + pixelDev, mouseSpeed
+    customMouseMove(bankCoords[3]["essenceWithdrawX"], bankCoords[3]["essenceWithdrawY"])
+    ; MouseMove, bankCoords[3]["essenceWithdrawX"] + pixelDev, bankCoords[3]["essenceWithdrawY"] + pixelDev, mouseSpeed
     MouseClick, Left
     Send {Esc}
     Sleep, delayDev
@@ -86,20 +104,35 @@ teleportTo(location) {
     ; Open equipment tab 
     Send, {F5}
     ; Move mouse to Ring of Dueling
-    MouseMove, equipmentCoords[1]["ringSlotX"] + pixelDev, equipmentCoords[1]["ringSlotY"] + pixelDev, mouseSpeed
-    ; Right click ring
-    MouseClick, Right
 
     ; Conditonally select CW or DA
     if (location == "da") {
+        customMouseMove(equipmentCoords[1]["ringSlotX"], equipmentCoords[1]["ringSlotY"])
+        ; MouseMove, equipmentCoords[1]["ringSlotX"] + pixelDev, equipmentCoords[1]["ringSlotY"] + pixelDev, mouseSpeed
+        ; Right click ring
+        MouseClick, Right
         ; Duel arena
         ; MsgBox, "Teleporting to: Duel Arena"
-        MouseMove, equipmentCoords[2]["duelArenaX"] + pixelDev, equipmentCoords[2]["duelArenaY"] + pixelDev, mouseSpeed
+        customMouseMove(equipmentCoords[2]["duelArenaX"], equipmentCoords[2]["duelArenaY"])
+        ; MouseMove, equipmentCoords[2]["duelArenaX"] + pixelDev, equipmentCoords[2]["duelArenaY"] + pixelDev, mouseSpeed
 
+    } else if (location == "home") {
+        ; Mousemove to construction cape
+        customMouseMove(equipmentCoords[4]["conCapeX"], equipmentCoords[4]["conCapeY"])
+        MouseClick, Right
+        customMouseMove(equipmentCoords[4]["conCapeX"] - 25, equipmentCoords[4]["conCapeY"] + 72)
+        MouseClick, Left
+
+        ; Shift + 
     } else {
+        customMouseMove(equipmentCoords[1]["ringSlotX"], equipmentCoords[1]["ringSlotY"])
+        ; MouseMove, equipmentCoords[1]["ringSlotX"] + pixelDev, equipmentCoords[1]["ringSlotY"] + pixelDev, mouseSpeed
+        ; Right click ring
+        MouseClick, Right
         ; Castle Wars
         ; MsgBox, % "Teleporting to: Castle Wars with location value = " location
-        MouseMove, equipmentCoords[3]["castleWarsX"] + pixelDev, equipmentCoords[3]["castleWarsY"] + pixelDev, mouseSpeed
+        customMouseMove(equipmentCoords[3]["castleWarsX"], equipmentCoords[3]["castleWarsY"])
+        ; MouseMove, equipmentCoords[3]["castleWarsX"] + pixelDev, equipmentCoords[3]["castleWarsY"] + pixelDev, mouseSpeed
     }
     ; Click RoD teleport
     MouseClick, Left
@@ -121,9 +154,9 @@ castImbue() {
     Send, {F2}
 
     ; Move mouse to Imbue spell
-    MouseMove, spellCoords[1]["imbueX"] + pixelDev, spellCoords[1]["imbueY"] + pixelDev, mouseSpeed
+    customMouseMove(spellCoords[1]["imbueX"], spellCoords[1]["imbueY"])
+    ; MouseMove, spellCoords[1]["imbueX"] + pixelDev, spellCoords[1]["imbueY"] + pixelDev, mouseSpeed
 
-    ; MsgBox, % "Casting Imbue! coords: " spellCoords[1]["imbueX"] " " spellCoords[1]["imbueY"]
     MouseClick, Left
 
     Sleep, delayDev
@@ -140,11 +173,13 @@ useEarthRunesWithAltar() {
     delayDev := variance["actionDelay"]
 
     ; Mousemove to Earth runes
-    MouseMove, inventoryCoords[4]["slot4X"] + pixelDev, inventoryCoords[4]["slot4Y"] + pixelDev, mouseSpeed
+    customMouseMove(inventoryCoords[4]["slot4X"], inventoryCoords[4]["slot4Y"])
+    ; MouseMove, inventoryCoords[4]["slot4X"] + pixelDev, inventoryCoords[4]["slot4Y"] + pixelDev, mouseSpeed
     ; Select Earth runes
     MouseClick, Left
     ; Mousemove to Fire Altar
-    MouseMove, altarCoords[1]["fireAltarX"] + pixelDev, altarCoords[1]["fireAltarY"] + pixelDev, mouseSpeed
+    customMouseMove(altarCoords[1]["fireAltarX"], altarCoords[1]["fireAltarY"])
+    ; MouseMove, altarCoords[1]["fireAltarX"] + pixelDev, altarCoords[1]["fireAltarY"] + pixelDev, mouseSpeed
     ; Use Earth runes with Fire Altar to craft Lavas
     MouseClick, Left
 
@@ -172,28 +207,34 @@ getNewJewelry(jewelryType) {
 
     if (jewelryType == "ring") {
         ; Assumes bank is already open
-        MouseMove, bankCoords[4]["rodX"], bankCoords[4]["rodY"], mouseSpeed
+        customMouseMove(bankCoords[4]["rodX"], bankCoords[4]["rodY"])
+        ; MouseMove, bankCoords[4]["rodX"], bankCoords[4]["rodY"], mouseSpeed
         MouseClick, Left
         Sleep, rDelay
-        MouseMove, inventoryCoords[5]["equipItemX"], inventoryCoords[5]["equipItemY"], mouseSpeed
+        customMouseMove(inventoryCoords[5]["equipItemX"], inventoryCoords[5]["equipItemY"])
+        ; MouseMove, inventoryCoords[5]["equipItemX"], inventoryCoords[5]["equipItemY"], mouseSpeed
         Sleep, rDelay
         MouseClick, Right
-        MouseMove, inventoryCoords[5]["equipItemX"] - 30, inventoryCoords[5]["equipItemY"] + 120, mouseSpeed
+        customMouseMove(inventoryCoords[5]["equipItemX"] - 30, inventoryCoords[5]["equipItemY"] + 120)
+        ; MouseMove, inventoryCoords[5]["equipItemX"] - 30, inventoryCoords[5]["equipItemY"] + 120, mouseSpeed
         Sleep, rDelay
         MouseClick, Left
 
     } else if (jewelryType == "necklace") {
         ; Assumes bank is already open
-        MouseMove, bankCoords[5]["bindingX"], bankCoords[5]["bindingY"], mouseSpeed
+        customMouseMove(bankCoords[5]["bindingX"], bankCoords[5]["bindingY"])
+        ; MouseMove, bankCoords[5]["bindingX"], bankCoords[5]["bindingY"], mouseSpeed
         MouseClick, Left
         Sleep, rDelay
         ; Mousemove to inventory slot (next to origin)
-        MouseMove, inventoryCoords[5]["equipItemX"], inventoryCoords[5]["equipItemY"], mouseSpeed
+        customMouseMove(inventoryCoords[5]["equipItemX"], inventoryCoords[5]["equipItemY"])
+        ; MouseMove, inventoryCoords[5]["equipItemX"], inventoryCoords[5]["equipItemY"], mouseSpeed
         Sleep, rDelay
         ; Right click necklace
         MouseClick, Right
         ; Mousemove to 'Equip'
-        MouseMove, inventoryCoords[5]["equipItemX"] - 32, inventoryCoords[5]["equipItemY"] + 120, mouseSpeed
+        customMouseMove(inventoryCoords[5]["equipItemX"] - 32, inventoryCoords[5]["equipItemY"] + 120)
+        ; MouseMove, inventoryCoords[5]["equipItemX"] - 32, inventoryCoords[5]["equipItemY"] + 120, mouseSpeed
         Sleep, rDelay
         ; Click to equip
         MouseClick, Left
